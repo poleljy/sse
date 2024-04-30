@@ -28,7 +28,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(k, v)
 	}
 
-	if s.StreamParser != nil {
+	if s.StreamParser == nil {
 		s.StreamParser = streamParser(r)
 	}
 	// Get the StreamID
