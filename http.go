@@ -28,8 +28,13 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(k, v)
 	}
 
-	// Get the StreamID from the URL
-	streamID := r.URL.Query().Get("stream")
+	var streamID string
+	if s.StreamBind != nil {
+		streamID = s.StreamBind()
+	} else {
+		// Get the StreamID from the URL
+		streamID = r.URL.Query().Get("stream")
+	}
 	if streamID == "" {
 		http.Error(w, "Please specify a stream!", http.StatusInternalServerError)
 		return

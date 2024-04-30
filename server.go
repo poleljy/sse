@@ -34,6 +34,9 @@ type Server struct {
 	OnSubscribe   func(streamID string, sub *Subscriber)
 	OnUnsubscribe func(streamID string, sub *Subscriber)
 
+	// stream bind
+	StreamBind func() string
+
 	streams   map[string]*Stream
 	muStreams sync.RWMutex
 }
