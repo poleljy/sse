@@ -28,13 +28,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(k, v)
 	}
 
-	var streamID string
-	if s.StreamBind != nil {
-		streamID = s.StreamBind()
-	} else {
-		// Get the StreamID from the URL
-		streamID = r.URL.Query().Get("stream")
+	if s.StreamParser != nil {
+		s.StreamParser = streamParser(r)
 	}
+	// Get the StreamID
+	streamID := s.StreamParser()
 	if streamID == "" {
 		http.Error(w, "Please specify a stream!", http.StatusInternalServerError)
 		return
@@ -121,5 +119,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "\n")
 
 		flusher.Flush()
+	}
+}
+
+func streamParser(r *http.Request) func() string {
+	return func() string {
+		return r.URL.Query().Get("stream")
 	}
 }
